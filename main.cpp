@@ -1,7 +1,9 @@
 #ifdef __cplusplus
-    #include <cstdlib>
+#include <cstdlib>
 #else
-    #include <stdlib.h>
+
+#include <stdlib.h>
+
 #endif
 
 #include <SDL/SDL.h>
@@ -9,14 +11,12 @@
 #include "GameGraphics.h"
 #include "GameState.h"
 
-int main ( int argc, char** argv )
-{
+int main(int argc, char **argv) {
     // seed initialize
-    srand (time(NULL));
+    srand(time(NULL));
     // initialize SDL video
-    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-    {
-        printf( "Unable to init SDL: %s\n", SDL_GetError() );
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("Unable to init SDL: %s\n", SDL_GetError());
         return 1;
     }
 
@@ -24,10 +24,9 @@ int main ( int argc, char** argv )
     atexit(SDL_Quit);
 
     // create a new window
-    SDL_Surface* screen = SDL_SetVideoMode(640, 480, 16,
-                                           SDL_HWSURFACE|SDL_DOUBLEBUF);
-    if ( !screen )
-    {
+    SDL_Surface *screen = SDL_SetVideoMode(640, 480, 16,
+                                           SDL_HWSURFACE | SDL_DOUBLEBUF);
+    if (!screen) {
         printf("Unable to set 640x480 video: %s\n", SDL_GetError());
         return 1;
     }
@@ -38,41 +37,33 @@ int main ( int argc, char** argv )
     // load game graphics
     int errorCode = LoadGameGraphics();
 
-    if (errorCode)
-    {
+    if (errorCode) {
         printf("Error loading game graphics.\n");
         return 1;
     }
-
-    InitializeGame();
+    InitializeMenu();
+//    InitializeGame();
 
     // program main loop
-    float lastTime = (float)SDL_GetTicks() / 1000.0f;
+    float lastTime = (float) SDL_GetTicks() / 1000.0f;
     bool done = false;
-    while (!done)
-    {
+    while (!done) {
         // message processing loop
         SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
+        while (SDL_PollEvent(&event)) {
             // check for messages
-            switch (event.type)
-            {
+            switch (event.type) {
                 // exit if the window is closed
-            case SDL_QUIT:
-                done = true;
-                break;
+                case SDL_QUIT:
+                    done = true;
+                    break;
 
-                // check for keypresses
-            case SDL_KEYDOWN:
-                {
+                    // check for keypresses
+                case SDL_KEYDOWN: {
                     // exit if ESCAPE is pressed
                     if (event.key.keysym.sym == SDLK_ESCAPE)
                         done = true;
-                    
-                    // if (event.key.keysym.sym == SDLK_BACKSPACE){
-                    //     lives = 3;
-                    // }
+
                     break;
                 }
             } // end switch
@@ -82,13 +73,36 @@ int main ( int argc, char** argv )
 
         } // end of message processing
 
-        float currentTime = (float)SDL_GetTicks() / 1000.0f;
-        float deltaTime = currentTime - lastTime;
+        switch (state) {
+            case MENU:{
+//                float currentTime = (float) SDL_GetTicks() / 1000.0f;
+//                float deltaTime = currentTime - lastTime;
 
-        if (deltaTime > 0)
-            UpdateGame(deltaTime);
+//                if (deltaTime > 0)
+//                    UpdateGameMenu(deltaTime);
+            }break;
 
-        lastTime = currentTime;
+            case PLAY1:{
+
+                float currentTime = (float) SDL_GetTicks() / 1000.0f;
+                float deltaTime = currentTime - lastTime;
+
+                if (deltaTime > 0)
+                    UpdateGamePlay(deltaTime);
+
+                lastTime = currentTime;
+            }break;
+
+            case PLAY2:{
+
+            }break;
+
+            case GAMEOVER:{
+
+            }
+        }
+
+
 
         DrawGameGraphics(screen);
 
