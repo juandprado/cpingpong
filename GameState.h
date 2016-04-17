@@ -16,7 +16,8 @@ typedef enum {
 extern Vector2D MenuPosition;
 extern Vector2D Arrow1Position;
 extern Vector2D Arrow2Position;
-extern Vector2D PaddlePosition;
+extern Vector2D PaddleOnePosition;
+extern Vector2D PaddleTwoPosition;
 extern Vector2D BallPosition;
 extern Vector2D GameOverPosition;
 
@@ -35,7 +36,8 @@ extern int BallSize_H;
 extern int GameOver_W;
 extern int GameOver_H;
 
-extern int lives;
+extern int livesPlayer1;
+extern int livesPlayer2;
 
 extern bool Movement_H;
 extern bool Movement_V;
@@ -45,7 +47,7 @@ extern State state;
 
 
 void InitializeMenu();
-void InitializeGame();
+void InitializeGame1();
 void UpdatePlayerInput(const SDL_Event * event);
 void UpdateGameMenu(float deltaTime);
 void UpdateGamePlay(float deltaTime);

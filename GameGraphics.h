@@ -6,7 +6,8 @@
 
 int LoadGameGraphics();
 void FreeGameGraphics();
-void gamePlay(SDL_Surface * screen);
+void gamePlay1(SDL_Surface * screen);
+void gamePlay2(SDL_Surface * screen);
 void gameOver(SDL_Surface * screen);
 void DrawGameGraphics(SDL_Surface * screen);
 

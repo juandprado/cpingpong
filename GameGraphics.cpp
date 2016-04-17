@@ -61,6 +61,7 @@ int LoadGameGraphics() {
     PaddleTwoSize_W = PaddleGraphic2->w;
     PaddleTwoSize_H = PaddleGraphic2->h;
 
+    //Image with the ball
     BallGraphic = SDL_LoadBMP("ball.bmp");
     if (!BallGraphic) {
         printf("Unable to load bitmap: %s\n", SDL_GetError());
@@ -70,6 +71,7 @@ int LoadGameGraphics() {
     BallSize_W = BallGraphic->w;
     BallSize_H = BallGraphic->h;
 
+    // Image with the message GameOver
     GameOverGraphic = SDL_LoadBMP("gameOver.bmp");
     if (!GameOverGraphic) {
         printf("Unable to load bitmap: %s\n", SDL_GetError());
@@ -114,13 +116,13 @@ void gameMenu(SDL_Surface *screen){
     SDL_Flip(screen);
 }
 
-void gamePlay(SDL_Surface *screen) {
+void gamePlay1(SDL_Surface *screen) {
     // clear screen
     SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
 
     SDL_Rect dstrect;
-    dstrect.x = (int) PaddlePosition.X;
-    dstrect.y = (int) PaddlePosition.Y;
+    dstrect.x = (int) PaddleOnePosition.X;
+    dstrect.y = (int) PaddleOnePosition.Y;
 
     // draw paddle bitmap
     SDL_BlitSurface(PaddleGraphic1, 0, screen, &dstrect);
@@ -134,7 +136,48 @@ void gamePlay(SDL_Surface *screen) {
     dstrect.x = 5;
     dstrect.y = 5;
 
-    for (int i = 0; i < lives; ++i, dstrect.x += 21) {
+    for (int i = 0; i < livesPlayer1; ++i, dstrect.x += 21) {
+        SDL_BlitSurface(BallGraphic, 0, screen, &dstrect);
+    }
+
+    // finally, update the screen :)
+    SDL_Flip(screen);
+}
+
+void gamePlay2(SDL_Surface *screen) {
+    // clear screen
+    SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
+
+    SDL_Rect dstrect;
+    dstrect.x = (int) PaddleOnePosition.X;
+    dstrect.y = (int) PaddleOnePosition.Y;
+
+    // draw paddle bitmap
+    SDL_BlitSurface(PaddleGraphic1, 0, screen, &dstrect);
+
+    dstrect.x = (int) PaddleTwoPosition.X;
+    dstrect.y = (int) PaddleTwoPosition.Y;
+
+    // draw paddle bitmap
+    SDL_BlitSurface(PaddleGraphic2, 0, screen, &dstrect);
+
+    dstrect.x = (int) BallPosition.X;
+    dstrect.y = (int) BallPosition.Y;
+
+    // draw ball bitmap
+    SDL_BlitSurface(BallGraphic, 0, screen, &dstrect);
+
+    dstrect.x = 5;
+    dstrect.y = 5;
+
+    for (int i = 0; i < livesPlayer1; ++i, dstrect.x += 21) {
+        SDL_BlitSurface(BallGraphic, 0, screen, &dstrect);
+    }
+
+    dstrect.x = 5;
+    dstrect.y = 475 - 16;
+
+    for (int i = 0; i < livesPlayer2; ++i, dstrect.x += 21) {
         SDL_BlitSurface(BallGraphic, 0, screen, &dstrect);
     }
 
@@ -160,9 +203,9 @@ void DrawGameGraphics(SDL_Surface *screen) {
     if (state == MENU) {
         gameMenu(screen);
     } else if(state == PLAY1){
-        gamePlay(screen);
+        gamePlay1(screen);
     } else if (state == PLAY2){
-
+        gamePlay2(screen);
     } else{
         gameOver(screen);
     }

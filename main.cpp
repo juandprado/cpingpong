@@ -75,11 +75,13 @@ int main(int argc, char **argv) {
 
         switch (state) {
             case MENU:{
+                float currentTime = (float) SDL_GetTicks() / 1000.0f;
 //                float currentTime = (float) SDL_GetTicks() / 1000.0f;
 //                float deltaTime = currentTime - lastTime;
 
 //                if (deltaTime > 0)
 //                    UpdateGameMenu(deltaTime);
+                lastTime = currentTime;
             }break;
 
             case PLAY1:{
@@ -101,9 +103,6 @@ int main(int argc, char **argv) {
 
             }
         }
-
-
-
         DrawGameGraphics(screen);
 
     } // end main loop
