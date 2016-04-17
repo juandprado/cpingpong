@@ -116,7 +116,7 @@ void gameMenu(SDL_Surface *screen){
     SDL_Flip(screen);
 }
 
-void gamePlay1(SDL_Surface *screen) {
+void gamePlay(SDL_Surface *screen) {
     // clear screen
     SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
 
@@ -124,41 +124,13 @@ void gamePlay1(SDL_Surface *screen) {
     dstrect.x = (int) PaddleOnePosition.X;
     dstrect.y = (int) PaddleOnePosition.Y;
 
-    // draw paddle bitmap
-    SDL_BlitSurface(PaddleGraphic1, 0, screen, &dstrect);
-
-    dstrect.x = (int) BallPosition.X;
-    dstrect.y = (int) BallPosition.Y;
-
-    // draw ball bitmap
-    SDL_BlitSurface(BallGraphic, 0, screen, &dstrect);
-
-    dstrect.x = 5;
-    dstrect.y = 5;
-
-    for (int i = 0; i < livesPlayer1; ++i, dstrect.x += 21) {
-        SDL_BlitSurface(BallGraphic, 0, screen, &dstrect);
-    }
-
-    // finally, update the screen :)
-    SDL_Flip(screen);
-}
-
-void gamePlay2(SDL_Surface *screen) {
-    // clear screen
-    SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
-
-    SDL_Rect dstrect;
-    dstrect.x = (int) PaddleOnePosition.X;
-    dstrect.y = (int) PaddleOnePosition.Y;
-
-    // draw paddle bitmap
+    // draw paddle1 bitmap
     SDL_BlitSurface(PaddleGraphic1, 0, screen, &dstrect);
 
     dstrect.x = (int) PaddleTwoPosition.X;
     dstrect.y = (int) PaddleTwoPosition.Y;
 
-    // draw paddle bitmap
+    // draw paddle2 bitmap
     SDL_BlitSurface(PaddleGraphic2, 0, screen, &dstrect);
 
     dstrect.x = (int) BallPosition.X;
@@ -185,6 +157,7 @@ void gamePlay2(SDL_Surface *screen) {
     SDL_Flip(screen);
 }
 
+
 void gameOver(SDL_Surface *screen) {
     SDL_FillRect(screen, 0, SDL_MapRGB(screen->format, 0, 0, 0));
 
@@ -202,10 +175,8 @@ void gameOver(SDL_Surface *screen) {
 void DrawGameGraphics(SDL_Surface *screen) {
     if (state == MENU) {
         gameMenu(screen);
-    } else if(state == PLAY1){
-        gamePlay1(screen);
-    } else if (state == PLAY2){
-        gamePlay2(screen);
+    } else if(state == PLAY1 || state == PLAY2){
+        gamePlay(screen);
     } else{
         gameOver(screen);
     }

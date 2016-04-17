@@ -61,24 +61,7 @@ void InitializeMenu() {
     tempState = 0;
 }
 
-void InitializeGame1(){
-    PaddleOnePosition.X = (ScreenSize_W - PaddleOneSize_W) / 2;
-    PaddleOnePosition.Y = ScreenSize_H - PaddleOneSize_H - 40;
-
-    BallPosition.X = (ScreenSize_W - BallSize_W) / 2;
-    BallPosition.Y = ScreenSize_H / 2;
-
-    GameOverPosition.X = (ScreenSize_W - 444) / 2;
-    GameOverPosition.Y = (ScreenSize_H - 128) / 2;
-
-    printf("x: %f y: %f\n", GameOverPosition.X, GameOverPosition.Y);
-
-    BallDirection.X = (rand() % 3) - 1;
-    BallDirection.Y = 1;
-    BallSpeed = 150.0f;
-}
-
-void InitializeGame2(){
+void InitializeGame(){
     PaddleOnePosition.X = (ScreenSize_W - PaddleOneSize_W) / 2;
     PaddleOnePosition.Y = ScreenSize_H - PaddleOneSize_H - 40;
 
@@ -146,13 +129,13 @@ void UpdatePlayerInput(const SDL_Event *event) {
             switch (tempState){
                 case 0:{
                     state = PLAY1;
-                    InitializeGame1();
+                    InitializeGame();
 //                    printf("opcion 1\n");
                 }break;
 
                 case 1:{
                     state = PLAY2;
-                    InitializeGame2();
+                    InitializeGame();
 //                    printf("opcion 2\n");
                 }break;
 
@@ -241,7 +224,7 @@ void UpdateGamePlay(float deltaTime) {
             livesPlayer1--;
             cout << "Speed Reached: " << BallSpeed << endl;
             if (livesPlayer1 > 0) {
-                InitializeGame1();
+                InitializeGame();
             }
             else {
                 state = GAMEOVER;
