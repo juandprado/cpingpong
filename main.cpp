@@ -70,9 +70,9 @@ int main ( int argc, char** argv )
                     if (event.key.keysym.sym == SDLK_ESCAPE)
                         done = true;
                     
-                    if (event.key.keysym.sym == SDLK_BACKSPACE){
-                        lives = 3;
-                    }
+                    // if (event.key.keysym.sym == SDLK_BACKSPACE){
+                    //     lives = 3;
+                    // }
                     break;
                 }
             } // end switch

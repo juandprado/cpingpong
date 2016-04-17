@@ -69,6 +69,11 @@ void UpdatePlayerInput(const SDL_Event * event)
 
     if (event->type == SDL_KEYUP && event->key.keysym.sym == SDLK_RIGHT)
         PressingRight = 0;
+    
+    if (event->key.keysym.sym == SDLK_BACKSPACE){
+        lives = 3;
+        InitializeGame();
+    }
 }
 
 bool IntersectSquares(Vector2D Position1, float Width1, float Height1,

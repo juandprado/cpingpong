@@ -1,0 +1,5 @@
+# objets
+*.o
+
+# executable
+main
