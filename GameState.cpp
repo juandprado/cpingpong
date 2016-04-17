@@ -70,7 +70,8 @@ void UpdatePlayerInput(const SDL_Event * event)
     if (event->type == SDL_KEYUP && event->key.keysym.sym == SDLK_RIGHT)
         PressingRight = 0;
     
-    if (event->key.keysym.sym == SDLK_BACKSPACE){
+    if (event->key.keysym.sym == SDLK_BACKSPACE)
+    {
         lives = 3;
         InitializeGame();
     }
@@ -82,12 +83,32 @@ bool IntersectSquares(Vector2D Position1, float Width1, float Height1,
     if (Position1.X + Width1 >= Position2.X &&
         Position1.X <= Position2.X + Width2 &&
         Position1.Y + Height1 >= Position2.Y &&
-        Position1.Y <= Position2.Y + Height2) {
+        Position1.Y <= Position2.Y + Height2) 
+    {
         return true;
     }
-    else {
+    else 
+    {
         return false;
     }
+}
+
+float BallProjection(float y, float y0, float y1, float x0, float x1)
+{
+    float x = ( ( (y - y1) / (y1 - y0) ) * ( x1 - x0)) + (x0);
+    while (x < 0 || x > ScreenSize_W - BallSize_W)
+    {
+        cout << x << endl;
+        if (x < 0)
+        {
+            x *= (-1);
+        } 
+        else 
+        {
+            x = 2 * (ScreenSize_W - BallSize_W) - x;
+        }
+    }
+    return x;
 }
 
 void UpdateGame(float deltaTime)
@@ -106,28 +127,36 @@ void UpdateGame(float deltaTime)
     //cout << ScreenSize_W - BallPosition.X << "\n";
 
     //collition with top border
-    if (BallPosition.Y < 0) {
+    if (BallPosition.Y < 0) 
+    {
         collitioned = true;
-        if (!Movement_V){
+        if (!Movement_V)
+        {
             cout << "Cambia direccion V" << endl;
+            cout << "Posicion colision x: " << BallPosition.X << endl;
+            cout << "Posicion colision y: " << BallPosition.Y << endl;
             Movement_V = true;
             BallDirection.Y *= (-1);
         }
     }
 
     //collition with bottom border
-    if (ScreenSize_H - BallPosition.Y - BallSize_H < 0) { 
+    if (ScreenSize_H - BallPosition.Y - BallSize_H < 0) 
+    { 
         collitioned = true;
-        if (!Movement_V){
+        if (!Movement_V)
+        {
             cout << "Cambia direccion V" << endl;
             Movement_V = true;
             BallDirection.Y *= (-1);
             lives--;
             cout << "Speed Reached: " << BallSpeed << endl;
-            if (lives > 0){
+            if (lives > 0)
+            {
             	InitializeGame();
             }
-            else{
+            else
+            {
             	BallDirection.Y = 0;
             	BallDirection.X = 0;
             	cout << "Elapsed Time: " << ElapsedTime << " seconds" << endl;
@@ -136,9 +165,11 @@ void UpdateGame(float deltaTime)
     }
 
     //collition with vertical borders
-    if ((ScreenSize_W - BallPosition.X - BallSize_W < 0) || (BallPosition.X < 0)) {
+    if ((ScreenSize_W - BallPosition.X - BallSize_W < 0) || (BallPosition.X < 0)) 
+    {
         collitioned = true;
-        if (!Movement_H){
+        if (!Movement_H)
+        {
             cout << "Cambia direccion H" << endl;
             Movement_H = true;
             BallDirection.X *= (-1);
@@ -146,17 +177,20 @@ void UpdateGame(float deltaTime)
     }
 
     //Tests if the full ball is on the screen
-    if (!collitioned){
+    if (!collitioned)
+    {
         Movement_H = false;
         Movement_V = false;
     }
 
     bool collitioned_P = false;
 
-    if (IntersectSquares(PaddlePosition, PaddleSize_W, PaddleSize_H, BallPosition, BallSize_W, BallSize_H)) {
+    if (IntersectSquares(PaddlePosition, PaddleSize_W, PaddleSize_H, BallPosition, BallSize_W, BallSize_H)) 
+    {
         collitioned_P = true;
-        cout << "Intersection with paddle" << endl;
-        if (!Movement_P){
+        cout << "Intersection with paddle 1" << endl;
+        if (!Movement_P)
+        {
             Movement_P = true;
             Vector2D PaddleCenter;
             PaddleCenter.X = PaddlePosition.X + PaddleSize_W/2;
@@ -168,15 +202,24 @@ void UpdateGame(float deltaTime)
             float length = sqrt(BallDirection.X * BallDirection.X +
                                 BallDirection.Y * BallDirection.Y);
 
-            if (length > 0){
+            if (length > 0)
+            {
                 BallDirection.X /= length;
                 BallDirection.Y /= length;
             }
-            else {
+            else 
+            {
                 BallDirection.Y *= (-1);
             }
             BallSpeed += 50.0f;
-            cout << BallSpeed << endl;
+            float y = 0.0f;
+            float y0 = BallPosition.Y;
+            float y1 = y0 - BallDirection.Y;
+            float x0 = BallPosition.X;
+            float x1 = x0 - BallDirection.X;
+
+            float x = BallProjection(y, y0, y1, x0, x1);
+            cout << "x projected: " << x << endl;
         }
     }
 
