@@ -49,6 +49,8 @@ static int PressingUp = 0;
 static int PressingDown = 0;
 static float BallSpeed = 150.0f;
 
+static float projection = 0.0f;
+
 void InitializeMenu() {
     MenuPosition.X = 0;
     MenuPosition.Y = 0;
@@ -74,7 +76,9 @@ void InitializeGame(){
     GameOverPosition.X = (ScreenSize_W - 444) / 2;
     GameOverPosition.Y = (ScreenSize_H - 128) / 2;
 
-    printf("x: %f y: %f\n", GameOverPosition.X, GameOverPosition.Y);
+    projection = (ScreenSize_W - PaddleOneSize_W) / 2;
+
+    //printf("x: %f y: %f\n", GameOverPosition.X, GameOverPosition.Y);
 
     BallDirection.X = (rand() % 3) - 1;
     BallDirection.Y = 1;
@@ -171,7 +175,7 @@ float BallProjection(float y, float y0, float y1, float x0, float x1){
     float x = ( ( (y - y1) / (y1 - y0) ) * ( x1 - x0)) + (x0);
     while (x < 0 || x > ScreenSize_W - BallSize_W)
     {
-        cout << x << endl;
+        //cout << x << endl;
         if (x < 0)
         {
             x *= (-1);
@@ -204,11 +208,19 @@ void UpdateGamePlay(float deltaTime) {
         collitioned = true;
         if (!Movement_V)
         {
-            cout << "Cambia direccion V" << endl;
-            cout << "Posicion colision x: " << BallPosition.X << endl;
-            cout << "Posicion colision y: " << BallPosition.Y << endl;
             Movement_V = true;
             BallDirection.Y *= (-1);
+            livesPlayer2--;
+            cout << "Speed Reached: " << BallSpeed << endl;
+            if (livesPlayer2 > 0) {
+                InitializeGame();
+            }
+            else {
+                state = GAMEOVER;
+                BallDirection.Y = 0;
+                BallDirection.X = 0;
+                cout << "Elapsed Time: " << ElapsedTime << " seconds" << endl;
+            }
         }
     }
 
@@ -218,7 +230,6 @@ void UpdateGamePlay(float deltaTime) {
         collitioned = true;
         if (!Movement_V)
         {
-            cout << "Cambia direccion V" << endl;
             Movement_V = true;
             BallDirection.Y *= (-1);
             livesPlayer1--;
@@ -239,7 +250,7 @@ void UpdateGamePlay(float deltaTime) {
     if ((ScreenSize_W - BallPosition.X - BallSize_W < 0) || (BallPosition.X < 0)) {
         collitioned = true;
         if (!Movement_H) {
-            cout << "Cambia direccion H" << endl;
+            //cout << "Cambia direccion H" << endl;
             Movement_H = true;
             BallDirection.X *= (-1);
         }
@@ -253,10 +264,12 @@ void UpdateGamePlay(float deltaTime) {
 
     bool collitioned_P = false;
 
+    //Collition of ball with paddle 1
     if (IntersectSquares(PaddleOnePosition, PaddleOneSize_W, PaddleOneSize_H, BallPosition, BallSize_W, BallSize_H))
     {
+
         collitioned_P = true;
-        cout << "Intersection with paddle 1" << endl;
+        //cout << "Intersection with paddle 1" << endl;
         if (!Movement_P)
         {
             Movement_P = true;
@@ -278,14 +291,52 @@ void UpdateGamePlay(float deltaTime) {
                 BallDirection.Y *= (-1);
             }
             BallSpeed += 50.0f;
-            float y = 0.0f;
+            float y = PaddleTwoPosition.Y + PaddleTwoSize_H;
+            float y0 = BallPosition.Y;
+            float y1 = y0 - BallDirection.Y;
+            float x0 = BallPosition.X;
+            float x1 = x0 - BallDirection.X;
+
+            projection = BallProjection(y, y0, y1, x0, x1);
+        }
+    }
+
+    //Collition of ball with paddle 2
+    if (IntersectSquares(PaddleTwoPosition, PaddleTwoSize_W, PaddleTwoSize_H, BallPosition, BallSize_W, BallSize_H))
+    {
+
+        collitioned_P = true;
+        //cout << "Intersection with paddle 2" << endl;
+        if (!Movement_P)
+        {
+            Movement_P = true;
+            Vector2D PaddleCenter;
+            PaddleCenter.X = PaddleTwoPosition.X + PaddleTwoSize_W / 2;
+            PaddleCenter.Y = PaddleTwoPosition.Y + PaddleTwoSize_H / 2;
+
+            BallDirection.X = (BallPosition.X - PaddleCenter.X);
+            BallDirection.Y = (BallPosition.Y - PaddleCenter.Y);
+
+            float length = sqrt(BallDirection.X * BallDirection.X +
+                                BallDirection.Y * BallDirection.Y);
+
+            if (length > 0) {
+                BallDirection.X /= length;
+                BallDirection.Y /= length;
+            }
+            else {
+                BallDirection.Y *= (-1);
+            }
+            BallSpeed += 50.0f;
+            float y = PaddleTwoPosition.Y + PaddleTwoSize_H;
             float y0 = BallPosition.Y;
             float y1 = y0 - BallDirection.Y;
             float x0 = BallPosition.X;
             float x1 = x0 - BallDirection.X;
 
             float x = BallProjection(y, y0, y1, x0, x1);
-            cout << "x projected: " << x << endl;
+            //cout << "Posicion colision x: " << BallPosition.X << endl;
+            //cout << "Posicion colision y: " << BallPosition.Y << endl;
         }
     }
 
@@ -293,7 +344,45 @@ void UpdateGamePlay(float deltaTime) {
         Movement_P = false;
     }
 
-    //cout << BallDirection.X << endl;
+    float PaddleTwoCenterX = PaddleTwoPosition.X + (PaddleTwoSize_W/2);
+
+    //If the paddle center is to the right of the projection, is moved to the left
+    if (PaddleTwoCenterX > projection)
+    {
+        if (PaddleTwoPosition.X > 0) {
+            if ( (PaddleTwoCenterX - PaddleSpeed * deltaTime) > projection)
+            {
+                PaddleTwoPosition.X -= PaddleSpeed * deltaTime;
+            }
+            else
+            {
+                PaddleTwoPosition.X = projection - (PaddleTwoSize_W/2);
+            }
+            if (PaddleTwoPosition.X < 0)
+            {
+                PaddleTwoPosition.X = 0;
+            }
+        }
+    }
+
+    //If the paddle center is to the left of the projection, is moved to the right
+    if (PaddleTwoCenterX < projection)
+    {
+        if (PaddleTwoPosition.X + PaddleTwoSize_W < ScreenSize_W) {
+            if ( (PaddleTwoCenterX - PaddleSpeed * deltaTime) < projection)
+            {
+                PaddleTwoPosition.X += PaddleSpeed * deltaTime;
+            }
+            else
+            {
+                PaddleTwoPosition.X = projection - (PaddleTwoSize_W/2);
+            }
+            if (PaddleTwoPosition.X + PaddleTwoSize_W > ScreenSize_W)
+            {
+                PaddleTwoPosition.X = ScreenSize_W - PaddleTwoSize_W;
+            }
+        }
+    }
 
     if (PressingLeft) {
         if (PaddleOnePosition.X > 0) {

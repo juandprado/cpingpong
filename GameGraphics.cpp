@@ -142,14 +142,14 @@ void gamePlay(SDL_Surface *screen) {
     dstrect.x = 5;
     dstrect.y = 5;
 
-    for (int i = 0; i < livesPlayer1; ++i, dstrect.x += 21) {
+    for (int i = 0; i < livesPlayer2; ++i, dstrect.x += 21) {
         SDL_BlitSurface(BallGraphic, 0, screen, &dstrect);
     }
 
     dstrect.x = 5;
     dstrect.y = 475 - 16;
 
-    for (int i = 0; i < livesPlayer2; ++i, dstrect.x += 21) {
+    for (int i = 0; i < livesPlayer1; ++i, dstrect.x += 21) {
         SDL_BlitSurface(BallGraphic, 0, screen, &dstrect);
     }
 
