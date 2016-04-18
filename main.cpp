@@ -97,6 +97,14 @@ int main(int argc, char **argv) {
 
             case PLAY2:{
 
+                float currentTime = (float) SDL_GetTicks() / 1000.0f;
+                float deltaTime = currentTime - lastTime;
+
+                if (deltaTime > 0)
+                    UpdateGamePlay(deltaTime);
+
+                lastTime = currentTime;
+
             }break;
 
             case GAMEOVER:{

@@ -43,11 +43,14 @@ State state = MENU;
 
 float ElapsedTime = 0.0f;
 
-static int PressingLeft = 0;
-static int PressingRight = 0;
+static int PressingLeftOne = 0;
+static int PressingRightOne = 0;
+static int PressingLeftTwo = 0;
+static int PressingRightTwo = 0;
 static int PressingUp = 0;
 static int PressingDown = 0;
 static float BallSpeed = 150.0f;
+static float PaddleSpeed = 200.0f;
 
 static float projection = 0.0f;
 
@@ -83,6 +86,7 @@ void InitializeGame(){
     BallDirection.X = (rand() % 3) - 1;
     BallDirection.Y = 1;
     BallSpeed = 150.0f;
+    PaddleSpeed = 200.0f;
 }
 
 void UpdatePlayerInput(const SDL_Event *event) {
@@ -91,17 +95,31 @@ void UpdatePlayerInput(const SDL_Event *event) {
 
     // Evento para cuando se preciona la flecha izquierda
     if (event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_LEFT)
-        PressingLeft = 1;
+        PressingLeftOne = 1;
 
     if (event->type == SDL_KEYUP && event->key.keysym.sym == SDLK_LEFT)
-        PressingLeft = 0;
+        PressingLeftOne = 0;
 
     // Evento para cuando se preciona la flecha derecha
     if (event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_RIGHT)
-        PressingRight = 1;
+        PressingRightOne = 1;
 
     if (event->type == SDL_KEYUP && event->key.keysym.sym == SDLK_RIGHT)
-        PressingRight = 0;
+        PressingRightOne = 0;
+
+    // Evento para cuando se preciona la tecla a
+    if (event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_a)
+        PressingLeftTwo = 1;
+
+    if (event->type == SDL_KEYUP && event->key.keysym.sym == SDLK_a)
+        PressingLeftTwo = 0;
+
+    // Evento para cuando se preciona la flecha derecha
+    if (event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_d)
+        PressingRightTwo = 1;
+
+    if (event->type == SDL_KEYUP && event->key.keysym.sym == SDLK_d)
+        PressingRightTwo = 0;
 
     // Evento para cuando se preciona la flecha de arriba
     if (event->type == SDL_KEYDOWN && event->key.keysym.sym == SDLK_UP){
@@ -192,9 +210,6 @@ void UpdateGamePlay(float deltaTime) {
 
     //adds deltaTime to the game total
     ElapsedTime += deltaTime;
-
-    const float PaddleSpeed = 200.0f;
-
     BallPosition.Y += BallSpeed * deltaTime * BallDirection.Y;
     BallPosition.X += BallSpeed * deltaTime * BallDirection.X;
 
@@ -298,6 +313,7 @@ void UpdateGamePlay(float deltaTime) {
             float x1 = x0 - BallDirection.X;
 
             projection = BallProjection(y, y0, y1, x0, x1);
+            PaddleSpeed += 25.0f;
         }
     }
 
@@ -337,6 +353,7 @@ void UpdateGamePlay(float deltaTime) {
             float x = BallProjection(y, y0, y1, x0, x1);
             //cout << "Posicion colision x: " << BallPosition.X << endl;
             //cout << "Posicion colision y: " << BallPosition.Y << endl;
+            PaddleSpeed += 25.0f;
         }
     }
 
@@ -344,53 +361,69 @@ void UpdateGamePlay(float deltaTime) {
         Movement_P = false;
     }
 
-    float PaddleTwoCenterX = PaddleTwoPosition.X + (PaddleTwoSize_W/2);
+    if (state == PLAY1){
+        float PaddleTwoCenterX = PaddleTwoPosition.X + (PaddleTwoSize_W/2);
+        //If the paddle center is to the right of the projection, is moved to the left
+        if (PaddleTwoCenterX > projection)
+        {
+            if (PaddleTwoPosition.X > 0) {
+                if ( (PaddleTwoCenterX - PaddleSpeed * deltaTime) > projection)
+                {
+                    PaddleTwoPosition.X -= PaddleSpeed * deltaTime;
+                }
+                else
+                {
+                    PaddleTwoPosition.X = projection - (PaddleTwoSize_W/2);
+                }
+                if (PaddleTwoPosition.X < 0)
+                {
+                    PaddleTwoPosition.X = 0;
+                }
+            }
+        }
 
-    //If the paddle center is to the right of the projection, is moved to the left
-    if (PaddleTwoCenterX > projection)
-    {
-        if (PaddleTwoPosition.X > 0) {
-            if ( (PaddleTwoCenterX - PaddleSpeed * deltaTime) > projection)
-            {
-                PaddleTwoPosition.X -= PaddleSpeed * deltaTime;
+        //If the paddle center is to the left of the projection, is moved to the right
+        if (PaddleTwoCenterX < projection)
+        {
+            if (PaddleTwoPosition.X + PaddleTwoSize_W < ScreenSize_W) {
+                if ( (PaddleTwoCenterX - PaddleSpeed * deltaTime) < projection)
+                {
+                    PaddleTwoPosition.X += PaddleSpeed * deltaTime;
+                }
+                else
+                {
+                    PaddleTwoPosition.X = projection - (PaddleTwoSize_W/2);
+                }
+                if (PaddleTwoPosition.X + PaddleTwoSize_W > ScreenSize_W)
+                {
+                    PaddleTwoPosition.X = ScreenSize_W - PaddleTwoSize_W;
+                }
             }
-            else
-            {
-                PaddleTwoPosition.X = projection - (PaddleTwoSize_W/2);
+        }
+    } else {
+        if (state == PLAY2){
+            if (PressingLeftTwo) {
+                if (PaddleTwoPosition.X > 0) {
+                    PaddleTwoPosition.X -= PaddleSpeed * deltaTime;
+                }
             }
-            if (PaddleTwoPosition.X < 0)
-            {
-                PaddleTwoPosition.X = 0;
+
+            if (PressingRightTwo) {
+                if (PaddleTwoPosition.X + PaddleTwoSize_W < ScreenSize_W) {
+                    PaddleTwoPosition.X += PaddleSpeed * deltaTime;
+                }
             }
         }
     }
+    
 
-    //If the paddle center is to the left of the projection, is moved to the right
-    if (PaddleTwoCenterX < projection)
-    {
-        if (PaddleTwoPosition.X + PaddleTwoSize_W < ScreenSize_W) {
-            if ( (PaddleTwoCenterX - PaddleSpeed * deltaTime) < projection)
-            {
-                PaddleTwoPosition.X += PaddleSpeed * deltaTime;
-            }
-            else
-            {
-                PaddleTwoPosition.X = projection - (PaddleTwoSize_W/2);
-            }
-            if (PaddleTwoPosition.X + PaddleTwoSize_W > ScreenSize_W)
-            {
-                PaddleTwoPosition.X = ScreenSize_W - PaddleTwoSize_W;
-            }
-        }
-    }
-
-    if (PressingLeft) {
+    if (PressingLeftOne) {
         if (PaddleOnePosition.X > 0) {
             PaddleOnePosition.X -= PaddleSpeed * deltaTime;
         }
     }
 
-    if (PressingRight) {
+    if (PressingRightOne) {
         if (PaddleOnePosition.X + PaddleOneSize_W < ScreenSize_W) {
             PaddleOnePosition.X += PaddleSpeed * deltaTime;
         }
