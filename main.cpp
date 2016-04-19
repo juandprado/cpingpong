@@ -8,6 +8,7 @@
 
 #include <SDL/SDL.h>
 #include <time.h>
+#include "GameSounds.h"
 #include "GameGraphics.h"
 #include "GameState.h"
 
@@ -35,14 +36,21 @@ int main(int argc, char **argv) {
     ScreenSize_H = screen->h;
 
     // load game graphics
-    int errorCode = LoadGameGraphics();
-
-    if (errorCode) {
+    int errorCodeGraphics = LoadGameGraphics();
+    if (errorCodeGraphics) {
         printf("Error loading game graphics.\n");
         return 1;
     }
+
+    // Load game sounds
+    int errorCodeSound = LoadGameSounds();
+    if(errorCodeSound){
+        printf("Error loading game sounds.\n");
+        return 1;
+    }
+
+
     InitializeMenu();
-//    InitializeGame();
 
     // program main loop
     float lastTime = (float) SDL_GetTicks() / 1000.0f;
@@ -74,7 +82,7 @@ int main(int argc, char **argv) {
         } // end of message processing
 
         switch (state) {
-            case MENU:{
+            case MENU: {
                 float currentTime = (float) SDL_GetTicks() / 1000.0f;
 //                float currentTime = (float) SDL_GetTicks() / 1000.0f;
 //                float deltaTime = currentTime - lastTime;
@@ -84,7 +92,7 @@ int main(int argc, char **argv) {
                 lastTime = currentTime;
             }break;
 
-            case PLAY1:{
+            case PLAY1: {
 
                 float currentTime = (float) SDL_GetTicks() / 1000.0f;
                 float deltaTime = currentTime - lastTime;
@@ -95,7 +103,7 @@ int main(int argc, char **argv) {
                 lastTime = currentTime;
             }break;
 
-            case PLAY2:{
+            case PLAY2: {
 
                 float currentTime = (float) SDL_GetTicks() / 1000.0f;
                 float deltaTime = currentTime - lastTime;
@@ -107,11 +115,12 @@ int main(int argc, char **argv) {
 
             }break;
 
-            case GAMEOVER:{
+            case GAMEOVER: {
 
             }
         }
         DrawGameGraphics(screen);
+
 
     } // end main loop
 

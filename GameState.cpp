@@ -3,6 +3,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include <pthread.h>
+#include "GameSounds.h"
 
 using namespace std;
 
@@ -40,6 +42,8 @@ bool Movement_V = false;
 bool Movement_P = false;
 
 State state = MENU;
+
+
 
 float ElapsedTime = 0.0f;
 
@@ -127,6 +131,9 @@ void UpdatePlayerInput(const SDL_Event *event) {
             Arrow1Position.Y -= 40;
             Arrow2Position.Y -= 40;
             tempState--;
+            pthread_t sound;
+            int err = pthread_create(&sound, NULL, &PlaySound, NULL);
+//            sonido.join();
         }
     }
 
@@ -139,6 +146,8 @@ void UpdatePlayerInput(const SDL_Event *event) {
             Arrow1Position.Y += 40;
             Arrow2Position.Y += 40;
             tempState++;
+            pthread_t sound;
+            int err = pthread_create(&sound, NULL, &PlaySound, NULL);
         }
     }
 

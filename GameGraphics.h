@@ -5,6 +5,7 @@
 #include <SDL/SDL.h>
 
 int LoadGameGraphics();
+
 void FreeGameGraphics();
 void gamePlay1(SDL_Surface * screen);
 void gamePlay2(SDL_Surface * screen);
