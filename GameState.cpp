@@ -276,9 +276,35 @@ void UpdateGamePlay(float deltaTime) {
     if ((ScreenSize_W - BallPosition.X - BallSize_W < 0) || (BallPosition.X < 0)) {
         collitioned = true;
         if (!Movement_H) {
-            //cout << "Cambia direccion H" << endl;
             Movement_H = true;
             BallDirection.X *= (-1);
+            int draw = (rand() % 5) + 1;
+            switch (draw) {
+                case 1:
+                    BallDirection.X *= 0.8f;
+                    break;
+                case 2:
+                    BallDirection.X *= 0.9f;
+                    break;
+                case 3:
+                    BallDirection.X *= 1.1f;
+                    break;
+                case 4:
+                    BallDirection.X *= 1.2f;
+                    break;
+                default:
+                    break;
+            }
+
+            if (draw != 5) {
+                float y = PaddleTwoPosition.Y + PaddleTwoSize_H;
+                float y0 = BallPosition.Y;
+                float y1 = y0 - BallDirection.Y;
+                float x0 = BallPosition.X;
+                float x1 = x0 - BallDirection.X;
+
+                projection = BallProjection(y, y0, y1, x0, x1);
+            }
         }
     }
 
