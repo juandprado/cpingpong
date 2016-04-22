@@ -244,6 +244,7 @@ void UpdateGamePlay(float deltaTime) {
                 BallDirection.Y = 0;
                 BallDirection.X = 0;
                 cout << "Elapsed Time: " << ElapsedTime << " seconds" << endl;
+                ElapsedTime = 0.0f;
             }
         }
     }
@@ -266,6 +267,7 @@ void UpdateGamePlay(float deltaTime) {
                 BallDirection.Y = 0;
                 BallDirection.X = 0;
                 cout << "Elapsed Time: " << ElapsedTime << " seconds" << endl;
+                ElapsedTime = 0.0f;
             }
         }
     }
@@ -294,7 +296,7 @@ void UpdateGamePlay(float deltaTime) {
 
         collitioned_P = true;
         //cout << "Intersection with paddle 1" << endl;
-        if (!Movement_P)
+        if (!Movement_P && !Movement_H)
         {
             Movement_P = true;
             Vector2D PaddleCenter;
@@ -332,7 +334,7 @@ void UpdateGamePlay(float deltaTime) {
 
         collitioned_P = true;
         //cout << "Intersection with paddle 2" << endl;
-        if (!Movement_P)
+        if (!Movement_P && !Movement_H)
         {
             Movement_P = true;
             Vector2D PaddleCenter;
